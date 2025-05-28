@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pencatatan Kebutuhan Mingguan</title>
+  <style>
+    /* Reset box sizing agar padding & border masuk ke ukuran elemen */
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      margin: 10px;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+
+    h1, h2 {
+      text-align: center;
+      color: #333;
+      margin-top: 30px;
+      margin-bottom: 15px;
+    }
+
+    .kategori {
+      border-radius: 8px;
+      padding: 15px 20px;
+      margin-bottom: 30px;
+      box-shadow: 0 2px 5px rgb(0 0 0 / 0.1);
+    }
+
+    .kamar-mandi { background-color: #f5d6f0; }
+    .dapur { background-color: #f5d6f0; }
+    .pribadi { background-color: #f5d6f0; }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+    }
+
+    input[type="text"], input[type="number"] {
+      padding: 10px;
+      width: 100%;
+      margin-bottom: 12px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+    }
+    input[type="text"]:focus, input[type="number"]:focus {
+      border-color: #007bff;
+      outline: none;
+    }
+
+    button {
+      padding: 10px;
+      width: 100%;
+      cursor: pointer;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+      margin-top: 5px;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    thead {
+      background-color: #007bff;
+      color: white;
+      font-weight: bold;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px 8px;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
+    .rekap {
+      font-weight: bold;
+      background-color: #ffc0cb;
+      padding: 15px 20px;
+      margin-top: 20px;
+      border: 1px solid #ff99aa;
+      text-align: center;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      box-shadow: 0 2px 6px rgb(0 0 0 / 0.1);
+    }
+
+    #notifikasi {
+      display: none;
+      margin-bottom: 15px;
+      padding: 15px;
+      border-radius: 5px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 1rem;
+      color: #fff;
+    }
+
+    /* Responsif Mobile */
+    @media (max-width: 600px) {
+
+      /* Container kategori beri padding lebih besar */
+      .kategori {
+        padding: 15px;
+      }
+
+      /* Input & tombol full width dan spasi */
+      input[type="text"], input[type="number"], button {
+        width: 100%;
+        margin-top: 10px;
+        font-size: 1.1rem;
+      }
+
+      /* Tabel bisa di scroll horizontal */
+      table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+
+      /* Perbesar padding table sel agar tidak terlalu rapat */
+      th, td {
+        padding: 12px 10px;
+        font-size: 1rem;
+      }
+
+      /* Perbesar font judul */
+      h1, h2 {
+        font-size: 1.8rem;
+      }
+
+      /* Margin kategori lebih besar */
+      .kategori {
+        margin-bottom: 30px;
+      }
+
+      /* Notifikasi lebih jelas */
+      #notifikasi {
+        font-size: 1.1rem;
+        padding: 15px 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Pencatatan Kebutuhan Mingguan</h1>
+
+  <label for="uangMingguan">Masukkan Uang Mingguan:</label>
+  <input type="text" id="uangMingguan" placeholder="Contoh: 100000" oninput="simpanUang()" />
+
+  <div id="notifikasi"></div>
+
+  <!-- Kategori: Kamar Mandi -->
+  <div class="kategori kamar-mandi">
+    <h2>Kategori: Kamar Mandi</h2>
+    <input type="text" id="namaBarang1" placeholder="Nama Barang" />
+    <input type="text" id="ukuranBarang1" placeholder="Ukuran" />
+    <input type="text" id="hargaBarang1" placeholder="Harga" />
+    <input type="text" id="pemakaianBarang1" placeholder="Lama Pemakaian" />
+    <button onclick="tambahBarang(1)">Tambah</button>
+    <table>
+      <thead>
+        <tr><th>No</th><th>Nama</th><th>Ukuran</th><th>Harga</th><th>Pemakaian</th><th>Aksi</th></tr>
+      </thead>
+      <tbody id="body1"></tbody>
+    </table>
+    <div>Total Kamar Mandi: <span id="total1">Rp0</span></div>
+  </div>
+
+  <!-- Kategori: Dapur -->
+  <div class="kategori dapur">
+    <h2>Kategori: Dapur</h2>
+    <input type="text" id="namaBarang2" placeholder="Nama Barang" />
+    <input type="text" id="ukuranBarang2" placeholder="Ukuran" />
+    <input type="text" id="hargaBarang2" placeholder="Harga" />
+    <input type="text" id="pemakaianBarang2" placeholder="Lama Pemakaian" />
+    <button onclick="tambahBarang(2)">Tambah</button>
+    <table>
+      <thead>
+        <tr><th>No</th><th>Nama</th><th>Ukuran</th><th>Harga</th><th>Pemakaian</th><th>Aksi</th></tr>
+      </thead>
+      <tbody id="body2"></tbody>
+    </table>
+    <div>Total Dapur: <span id="total2">Rp0</span></div>
+  </div>
+
+  <!-- Kategori: Pribadi -->
+  <div class="kategori pribadi">
+    <h2>Kategori: Pribadi</h2>
+    <input type="text" id="namaBarang3" placeholder="Nama Barang" />
+    <input type="text" id="ukuranBarang3" placeholder="Ukuran" />
+    <input type="text" id="hargaBarang3" placeholder="Harga" />
+    <input type="text" id="pemakaianBarang3" placeholder="Lama Pemakaian" />
+    <button onclick="tambahBarang(3)">Tambah</button>
+    <table>
+      <thead>
+        <tr><th>No</th><th>Nama</th><th>Ukuran</th><th>Harga</th><th>Pemakaian</th><th>Aksi</th></tr>
+      </thead>
+      <tbody id="body3"></tbody>
+    </table>
+    <div>Total Pribadi: <span id="total3">Rp0</span></div>
+  </div>
+
+  <!-- Rekap -->
+  <div class="rekap">
+    <div>Total Belanja: <span id="totalBelanja">Rp0</span></div>
+    <div>Sisa Uang: <span id="sisaUang">Rp0</span></div>
+  </div>
+
+  <script>
+    // Format angka ke Rupiah
+    function formatRupiah(angka) {
+      return new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        minimumFractionDigits: 0
+      }).format(angka);
+    }
+
+    // Simpan uang mingguan ke localStorage dan hitung ulang
+    function simpanUang() {
+      const uangInput = document.getElementById('uangMingguan');
+      let angka = uangInput.value.replace(/[^0-9]/g, '');
+
+      if (!angka) {
+        localStorage.removeItem('uangMingguan');
+        document.getElementById('sisaUang').textContent = 'Rp0';
+        return;
+      }
+
+      let uang = parseInt(angka);
+      localStorage.setItem('uangMingguan', uang);
+      uangInput.value = formatRupiah(uang);
+      hitungTotal();
+    }
+
+    // Tambah barang ke tabel kategori tertentu
+    function tambahBarang(kategori) {
+      const nama = document.getElementById(`namaBarang${kategori}`).value.trim();
+      const ukuran = document.getElementById(`ukuranBarang${kategori}`).value.trim();
+      const hargaInput = document.getElementById(`hargaBarang${kategori}`).value.trim();
+      const pemakaian = document.getElementById(`pemakaianBarang${kategori}`).value.trim();
+      const harga = parseInt(hargaInput.replace(/[^\d]/g, ''));
+
+      if (!nama || !ukuran || isNaN(harga) || !pemakaian) {
+        tampilkanNotifikasi('Semua kolom harus diisi dengan benar!', 'red');
+        return;
+      }
+
+      const data = ambilDataKategori(kategori);
+      data.push({ nama, ukuran, harga, pemakaian });
+      simpanDataKategori(kategori, data);
+      renderTabel(kategori);
+
+      // Clear input setelah tambah
+      document.getElementById(`namaBarang${kategori}`).value = '';
+      document.getElementById(`ukuranBarang${kategori}`).value = '';
+      document.getElementById(`hargaBarang${kategori}`).value = '';
+      document.getElementById(`pemakaianBarang${kategori}`).value = '';
+
+      tampilkanNotifikasi('Barang berhasil ditambahkan!', 'green');
+    }
+
+    // Hapus barang dari tabel
+    function hapusBarang(kategori, index) {
+      const data = ambilDataKategori(kategori);
+      data.splice(index, 1);
+      simpanDataKategori(kategori, data);
+      renderTabel(kategori);
+      tampilkanNotifikasi('Barang dihapus!', 'orange');
+    }
+
+    function ambilDataKategori(kategori) {
+      return JSON.parse(localStorage.getItem(`kategori${kategori}`)) || [];
+    }
+
+    function simpanDataKategori(kategori, data) {
+      localStorage.setItem(`kategori${kategori}`, JSON.stringify(data));
+    }
+
+    // Render isi tabel berdasarkan data
+    function renderTabel(kategori) {
+      const tbody = document.getElementById(`body${kategori}`);
+      tbody.innerHTML = '';
+      const data = ambilDataKategori(kategori);
+      let total = 0;
+
+      data.forEach((item, index) => {
+        total += item.harga;
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${index + 1}</td>
+          <td>${item.nama}</td>
+          <td>${item.ukuran}</td>
+          <td>${formatRupiah(item.harga)}</td>
+          <td>${item.pemakaian}</td>
+          <td><button onclick="hapusBarang(${kategori}, ${index})">Hapus</button></td>
+        `;
+        tbody.appendChild(row);
+      });
+
+      document.getElementById(`total${kategori}`).textContent = formatRupiah(total);
+      hitungTotal();
+    }
+
+    // Hitung total belanja dan sisa uang
+    function hitungTotal() {
+      let total = 0;
+      for (let i = 1; i <= 3; i++) {
+        const data = ambilDataKategori(i);
+        data.forEach(item => total += item.harga);
+      }
+      document.getElementById('totalBelanja').textContent = formatRupiah(total);
+
+      const uangMingguan = parseInt(localStorage.getItem('uangMingguan')) || 0;
+      const sisa = uangMingguan - total;
+      document.getElementById('sisaUang').textContent = formatRupiah(sisa);
+    }
+
+    // Tampilkan notifikasi pesan
+    function tampilkanNotifikasi(pesan, warna) {
+      const notif = document.getElementById('notifikasi');
+      notif.textContent = pesan;
+      notif.style.display = 'block';
+      notif.style.backgroundColor = warna;
+      notif.style.color = '#fff';
+      setTimeout(() => {
+        notif.style.display = 'none';
+      }, 3000);
+    }
+
+    // Inisialisasi data saat halaman dimuat
+    window.onload = function() {
+      const uangMingguan = localStorage.getItem('uangMingguan');
+      if (uangMingguan) {
+        document.getElementById('uangMingguan').value = formatRupiah(parseInt(uangMingguan));
+      }
+      for (let i = 1; i <= 3; i++) {
+        renderTabel(i);
+      }
+      hitungTotal();
+    };
+  </script>
+</body>
+</html>
